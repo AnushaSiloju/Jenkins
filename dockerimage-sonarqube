@@ -1,3 +1,4 @@
+#Swap memory
 swapoff -a
 
 # Install Docker
