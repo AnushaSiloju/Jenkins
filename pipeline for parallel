@@ -1,0 +1,66 @@
+pipeline {
+
+   agent {
+             label 'slave'
+   }
+
+   parameters {
+        string defaultValue: 'master', description: 'used via string parameter in declarative syntax', name: 'branch_name'
+        choice choices: ['DEV', 'SIT', 'UAT'], description: 'Environment via parameter', name: 'environment'
+   } 
+
+   triggers {
+      cron '00 20 * * *'
+   }
+
+   options {
+         disableConcurrentBuilds()
+         buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '20')
+         timestamps()
+   }
+   
+   tools {
+     jdk 'java'
+     maven 'maven'
+   }
+   
+   environment {
+  data_path = "/opt/data/"
+  SCANNER_HOME= tool 'sonarqube-scanner'
+ }
+
+   stages {
+     stage('Code Checkout') {
+     steps {
+         git branch: '$branch_name', credentialsId: 'anusha', url: 'https://github.com/AnushaSiloju/Jenkins.git'
+     }
+   }
+
+   stage('stage2') {
+       parallel {
+           stage('Unit Testing'){
+               steps {
+                   mvn test
+               }
+           }
+           stage('SonarQube Testing'){
+               steps {
+                   
+               }
+           }
+        }
+      }
+   }
+   
+   post {
+    always {
+      echo "Epudaina"
+    }
+   success {
+      echo "gelisteney"
+    }
+   failure {
+      echo "odipoyav"
+  }
+}
+ }
