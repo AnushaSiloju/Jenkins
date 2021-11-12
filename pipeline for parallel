@@ -36,7 +36,7 @@ pipeline {
      }
    }
 
-   stage('stage2') {
+   stage('UandS') {
        parallel {
            stage('Unit Testing'){
                steps {
@@ -45,7 +45,9 @@ pipeline {
            }
            stage('SonarQube Testing'){
                steps {
-                   
+                  withSonarQubeEnv(installationName:'AnushaSonarqube') {
+                      sh "$SCANNER_HOME/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
+                    } 
                }
            }
         }
